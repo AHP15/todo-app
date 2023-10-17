@@ -1,64 +1,65 @@
 #include <SDL2/SDL.h>
 #include <iostream>
-#include <memory>
 
 int main()
 {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    SDL_Init(SDL_INIT_EVERYTHING);
+
+    SDL_Window* window{};
+    SDL_Renderer* renderer{};
+    SDL_Event event{};
+
+    SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer);
+    SDL_Rect rec{10, 10, 250, 250};
+
+    bool running {true};
+    bool skip {false};
+    while (running)
     {
-        // Handle initialization error
-        std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << '\n';
-        return 1;
-    }
-
-    SDL_Window *window{nullptr};
-    window = SDL_CreateWindow(
-        "Todo App",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        800,
-        600,
-        SDL_WINDOW_SHOWN);
-
-    if (window == nullptr)
-    {
-        // Handle window creation error
-        std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
-        return 2;
-    }
-
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (renderer == NULL) {
-        std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
-        return 3;
-    }
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-    bool quit {false};
-    SDL_Event e;
-
-    while (!quit)
-    {
-        while (SDL_PollEvent(&e) != 0)
+        while (SDL_PollEvent(&event))
         {
-            if (e.type == SDL_QUIT)
-            {
-                quit = true;
+            if(event.type == SDL_QUIT){
+                running = false;
+            } else if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_RIGHT:
+                    rec.x += 10;
+                    break;
+                default:
+                    break;
+                }
+
+            } else if (event.type == SDL_KEYUP) {
+
+            } else if (event.type == SDL_MOUSEMOTION) {
+                // SDL_GetMouseState(&rec.x, &rec.y);
+            } else if(event.type == SDL_MOUSEBUTTONDOWN) {
+                if(skip) {
+                    skip = false;
+                } else {
+                    skip = true;
+                }
+                SDL_SetRenderDrawColor(renderer, 245, 245, 245, 255);
+                SDL_RenderClear(renderer);
+                SDL_SetRenderDrawColor(renderer, 225, 250, 0, 255);
+                SDL_RenderFillRect(renderer, &rec);
+                SDL_RenderPresent(renderer);
             }
         }
 
-         // Clear the renderer
+        if(skip) continue;
+        
+        SDL_SetRenderDrawColor(renderer, 245, 245, 245, 255);
         SDL_RenderClear(renderer);
 
-        // Draw a red rectangle
-        SDL_Rect rect = {100, 100, 200, 150}; // X, Y, Width, Height
-        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawColor(renderer, 245, 0, 0, 255);
+        SDL_RenderFillRect(renderer, &rec);
 
-        // Present the renderer's content to the window
         SDL_RenderPresent(renderer);
     }
+    
 
-    // Cleanup and quit
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
