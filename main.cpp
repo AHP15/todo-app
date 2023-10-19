@@ -1,10 +1,13 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
+#include "TodoConfig.h"
+
 int main()
 {
+    std::cout << "Todo version " << TODO_VERSION_MAJOR << TODO_VERSION_MINOR << '\n';
     SDL_Init(SDL_INIT_EVERYTHING);
-
+    
     SDL_Window* window{};
     SDL_Renderer* renderer{};
     SDL_Event event{};
