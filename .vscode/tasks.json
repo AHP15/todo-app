@@ -19,7 +19,8 @@
 				"-Wsign-conversion",
 				"-Werror",
 				"-std=c++20",
-				"${file}",
+				"${workspaceFolder}/src/**.cpp",
+				"-I./includes",
 				"-lSDL2",
 				"-o",
 				"${fileDirname}/app"
@@ -50,7 +51,8 @@
 				"-Wsign-conversion",
 				"-Werror",
 				"-std=c++20",
-				"${file}",
+				"${workspaceFolder}/src/**.cpp",
+				"-I./includes",
 				"-lSDL2",
 				"-o",
 				"${fileDirname}/app"
